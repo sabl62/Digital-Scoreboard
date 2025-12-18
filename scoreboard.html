@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Live Scoreboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .board {
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            width: 600px;
+        }
+
+        .team {
+            font-size: 2em;
+            margin: 20px 0;
+        }
+
+        .score {
+            font-size: 4em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="board">
+        <div class="team">
+            <span id="t1Name">Team 1</span>
+            <div id="t1Score" class="score">0</div>
+        </div>
+
+        <div class="team">
+            <span id="t2Name">Team 2</span>
+            <div id="t2Score" class="score">0</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "http://127.0.0.1:8000/api/scoreboard";
+
+        async function loadScore() {
+            try {
+                const res = await fetch(`${API_BASE}/get/`);
+                const data = await res.json();
+
+                document.getElementById("t1Name").textContent = data.data.team1_name;
+                document.getElementById("t2Name").textContent = data.data.team2_name;
+                document.getElementById("t1Score").textContent = data.data.team1_score;
+                document.getElementById("t2Score").textContent = data.data.team2_score;
+            } catch { }
+        }
+
+        setInterval(loadScore, 1000);
+        loadScore();
+    </script>
+</body>
+
+</html>
