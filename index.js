@@ -1,214 +1,183 @@
-const API_BASE = document.getElementById("apiUrl").value;
+  const API_BASE = "http://127.0.0.1:8000/api/scoreboard";
 
-let team1Score = 0;
-let team2Score = 0;
-let team1Fouls = 0;
-let team2Fouls = 0;
-let period = 1;
-let timeRemaining = 720; // Start with 12:00
-let isClockRunning = false;
-let clockInterval = null;
 
-// Initialize time display
-updateTimeDisplay();
+        const gameState = {
+            team1Score: 0, team2Score: 0,
+            team1Fouls: 0, team2Fouls: 0,
+            team1Name: "HOME TEAM", team2Name: "AWAY TEAM",
+            period: 1, timeRemaining: 720,
+            clockRunning: false
+        };
 
-function changeScore(team, value) {
-    if (team === "team1") {
-        team1Score = Math.max(0, team1Score + value);
-        document.getElementById("team1Score").textContent = team1Score;
-    } else {
-        team2Score = Math.max(0, team2Score + value);
-        document.getElementById("team2Score").textContent = team2Score;
-    }
-}
+        let clockInterval = null;
 
-function changeFouls(team, value) {
-    if (team === "team1") {
-        team1Fouls = Math.max(0, team1Fouls + value);
-        document.getElementById("team1Fouls").textContent = team1Fouls;
-    } else {
-        team2Fouls = Math.max(0, team2Fouls + value);
-        document.getElementById("team2Fouls").textContent = team2Fouls;
-    }
-}
+        const elements = {
+            team1Score: document.getElementById("team1-score"),
+            team2Score: document.getElementById("team2-score"),
+            team1Name: document.getElementById("team1-name"),
+            team2Name: document.getElementById("team2-name"),
+            periodDisplay: document.getElementById("period-display"),
+            timeDisplay: document.getElementById("time-display"),
+            team1FoulsDisplay: document.getElementById("team1-fouls-display"),
+            team2FoulsDisplay: document.getElementById("team2-fouls-display"),
+            clockControl: document.getElementById("clock-control"),
+            statusText: document.getElementById("status-text"),
+            minutesInput: document.getElementById("minutes-input"),
+            secondsInput: document.getElementById("seconds-input"),
+            log: document.getElementById("activity-log")
+        };
 
-function resetFouls(team) {
-    if (team === "team1") {
-        team1Fouls = 0;
-        document.getElementById("team1Fouls").textContent = team1Fouls;
-    } else {
-        team2Fouls = 0;
-        document.getElementById("team2Fouls").textContent = team2Fouls;
-    }
-}
 
-function changePeriod(value) {
-    period = Math.max(1, period + value);
-    document.getElementById("periodDisplay").textContent = period;
-}
-
-function formatTime(seconds) {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-}
-
-function updateTimeDisplay() {
-    document.getElementById("timeDisplay").textContent = formatTime(timeRemaining);
-}
-
-function setTime(seconds) {
-    clearInterval(clockInterval);
-    isClockRunning = false;
-    timeRemaining = seconds;
-    updateTimeDisplay();
-    document.getElementById("startStopBtn").textContent = "▶ Start";
-
-    // Update input fields
-    document.getElementById("minutesInput").value = Math.floor(seconds / 60);
-    document.getElementById("secondsInput").value = seconds % 60;
-}
-
-function setCustomMinutes(minutes) {
-    setTime(minutes * 60);
-}
-
-function setCustomTime() {
-    const minutes = parseInt(document.getElementById("minutesInput").value) || 0;
-    const seconds = parseInt(document.getElementById("secondsInput").value) || 0;
-    setTime((minutes * 60) + seconds);
-}
-
-function startStopClock() {
-    if (isClockRunning) {
-        // Pause the clock
-        clearInterval(clockInterval);
-        isClockRunning = false;
-        document.getElementById("startStopBtn").textContent = "▶ Start";
-        document.getElementById("timeDisplay").style.color = ""; // Reset color
-        document.getElementById("timeDisplay").style.animation = ""; // Reset animation
-    } else {
-        // Start the clock
-        isClockRunning = true;
-        document.getElementById("startStopBtn").textContent = "⏸ Pause";
-
-        clockInterval = setInterval(() => {
-            if (timeRemaining > 0) {
-                timeRemaining--;
-                updateTimeDisplay();
-
-                // Flash red when under 10 seconds
-                if (timeRemaining <= 10) {
-                    document.getElementById("timeDisplay").style.color = "#ff0000";
-                    document.getElementById("timeDisplay").style.animation = "pulse 0.5s infinite";
-                }
-
-                if (timeRemaining <= 0) {
-                    // Time's up
-                    clearInterval(clockInterval);
-                    isClockRunning = false;
-                    document.getElementById("startStopBtn").textContent = "▶ Start";
-                    document.getElementById("timeDisplay").textContent = "00:00";
-                    showStatus("⏰ Time's up!");
-                }
-            }
-        }, 1000);
-    }
-
-    // Immediately send update to sync clock state
-    sendUpdate();
-}
-
-function resetClock() {
-    clearInterval(clockInterval);
-    isClockRunning = false;
-    timeRemaining = 720; // Reset to 12:00
-    updateTimeDisplay();
-    document.getElementById("startStopBtn").textContent = "▶ Start";
-    document.getElementById("timeDisplay").style.color = "";
-    document.getElementById("timeDisplay").style.animation = "";
-
-    // Reset input fields
-    document.getElementById("minutesInput").value = 12;
-    document.getElementById("secondsInput").value = 0;
-}
-
-async function sendUpdate() {
-    const payload = {
-        team1_name: document.getElementById("team1Name").value,
-        team2_name: document.getElementById("team2Name").value,
-        team1_score: team1Score,
-        team2_score: team2Score,
-        team1_fouls: team1Fouls,
-        team2_fouls: team2Fouls,
-        period: period,
-        time_remaining: timeRemaining,
-        clock_running: isClockRunning
-    };
-
-    console.log("Sending update:", payload); // Debug
-
-    try {
-        const response = await fetch(`${API_BASE}/update/`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            body: JSON.stringify(payload)
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
         }
 
-        const data = await response.json();
-        console.log("Update response:", data);
-        showStatus("✅ Updated successfully");
-    } catch (error) {
-        console.error("Update error:", error);
-        showStatus("❌ Update failed: " + error.message);
+        function addLogEntry(msg) {
+            elements.log.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+        }
+
+        function updateDisplays() {
+            elements.team1Score.textContent = gameState.team1Score;
+            elements.team2Score.textContent = gameState.team2Score;
+            elements.team1Name.value = gameState.team1Name;
+            elements.team2Name.value = gameState.team2Name;
+            elements.periodDisplay.textContent = gameState.period;
+            elements.timeDisplay.textContent = formatTime(gameState.timeRemaining);
+            elements.team1FoulsDisplay.textContent = gameState.team1Fouls;
+            elements.team2FoulsDisplay.textContent = gameState.team2Fouls;
+
+            elements.minutesInput.value = Math.floor(gameState.timeRemaining / 60);
+            elements.secondsInput.value = gameState.timeRemaining % 60;
+
+            elements.timeDisplay.style.color = gameState.timeRemaining <= 10 ? "var(--danger)" : "var(--accent)";
+        }
+
+
+        async function sendUpdate() {
+            const payload = {
+                team1_name: gameState.team1Name,
+                team2_name: gameState.team2Name,
+                team1_score: gameState.team1Score,
+                team2_score: gameState.team2Score,
+                team1_fouls: gameState.team1Fouls,
+                team2_fouls: gameState.team2Fouls,
+                period: gameState.period,
+                time_remaining: gameState.timeRemaining,
+                clock_running: gameState.clockRunning,
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/update/`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+                if (response.ok) elements.statusText.textContent = "LIVE CONNECTION";
+            } catch (e) {
+                elements.statusText.textContent = "OFFLINE";
+            }
+        }
+
+    function startStopClock() {
+        if (gameState.clockRunning) {
+
+            clearInterval(clockInterval);
+            gameState.clockRunning = false;
+            elements.clockControl.innerHTML = '<i class="fas fa-play"></i> START CLOCK';
+            elements.clockControl.style.background = "var(--success)";
+            addLogEntry("Clock Paused");
+        } else {
+
+            gameState.clockRunning = true;
+            elements.clockControl.innerHTML = '<i class="fas fa-pause"></i> PAUSE CLOCK';
+            elements.clockControl.style.background = "var(--danger)";
+            addLogEntry("Clock Started");
+
+            clockInterval = setInterval(() => {
+                if (gameState.timeRemaining > 0) {
+                    gameState.timeRemaining--;
+                    updateDisplays();
+
+                    sendUpdate();
+
+                } else {
+
+                    clearInterval(clockInterval);
+                    gameState.clockRunning = false;
+                    updateDisplays();
+
+                    sendUpdate();
+                }
+            }, 1000);
+        }
+
+        sendUpdate();
     }
-}
 
-async function resetScoreboard() {
-    try {
-        await fetch(`${API_BASE}/reset/`, { method: "POST" });
-    } catch (error) {
-        console.error("Reset error:", error);
-    }
+  
+        document.querySelectorAll("[data-points]").forEach(btn => {
+            btn.onclick = () => {
+                const team = btn.dataset.team;
+                const pts = parseInt(btn.dataset.points);
+                if (team === 'team1') gameState.team1Score = Math.max(0, gameState.team1Score + pts);
+                else gameState.team2Score = Math.max(0, gameState.team2Score + pts);
+                updateDisplays();
+                sendUpdate();
+                addLogEntry(`Score Update: ${pts > 0 ? '+' : ''}${pts} points`);
+            };
+        });
 
-    // Reset all local values
-    team1Score = team2Score = 0;
-    team1Fouls = team2Fouls = 0;
-    period = 1;
+        document.querySelectorAll("[data-action]").forEach(btn => {
+            btn.onclick = () => {
+                const action = btn.dataset.action;
+                if (action === 'team1-foul') gameState.team1Fouls++;
+                if (action === 'team2-foul') gameState.team2Fouls++;
+                if (action === 'reset-fouls-team1') gameState.team1Fouls = 0;
+                if (action === 'reset-fouls-team2') gameState.team2Fouls = 0;
+                updateDisplays();
+                sendUpdate();
+            };
+        });
 
-    // Update displays
-    document.getElementById("team1Score").textContent = team1Score;
-    document.getElementById("team2Score").textContent = team2Score;
-    document.getElementById("team1Fouls").textContent = team1Fouls;
-    document.getElementById("team2Fouls").textContent = team2Fouls;
-    document.getElementById("periodDisplay").textContent = period;
+        elements.clockControl.onclick = startStopClock;
 
-    // Reset clock
-    resetClock();
+        document.getElementById("period-up").onclick = () => {
+            gameState.period = (gameState.period % 4) + 1;
+            updateDisplays();
+            sendUpdate();
+        };
 
-    showStatus("🔄 Scoreboard reset complete");
-}
+        document.querySelectorAll(".btn-preset").forEach(btn => {
+            btn.onclick = () => {
+                gameState.timeRemaining = parseInt(btn.dataset.minutes) * 60;
+                updateDisplays();
+                sendUpdate();
+            };
+        });
 
-function showStatus(msg) {
-    const s = document.getElementById("status");
-    s.textContent = msg;
-    setTimeout(() => s.textContent = "", 3000);
-}
+        document.getElementById("full-reset").onclick = async () => {
+            if (confirm("Full Game Reset?")) {
+                gameState.team1Score = 0; gameState.team2Score = 0;
+                gameState.team1Fouls = 0; gameState.team2Fouls = 0;
+                gameState.timeRemaining = 720; gameState.period = 1;
+                updateDisplays();
+                await fetch(`${API_BASE}/reset/`, { method: "POST" });
+                location.reload();
+            }
+        };
 
-// Add CSS for pulse animation
-document.head.insertAdjacentHTML('beforeend', `
-<style>
-@keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
-}
-</style>
-`);
+
+        elements.team1Name.onchange = (e) => { gameState.team1Name = e.target.value; sendUpdate(); };
+        elements.team2Name.onchange = (e) => { gameState.team2Name = e.target.value; sendUpdate(); };
+
+        const handleManualTime = () => {
+            gameState.timeRemaining = (parseInt(elements.minutesInput.value) * 60) + parseInt(elements.secondsInput.value);
+            updateDisplays();
+        };
+        elements.minutesInput.onchange = handleManualTime;
+        elements.secondsInput.onchange = handleManualTime;
+
+
+        updateDisplays();

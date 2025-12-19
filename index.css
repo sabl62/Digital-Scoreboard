@@ -1,159 +1,279 @@
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-}
+        :root {
+            --bg: #05070a;
+            --panel: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --home: #3b82f6;
+            --away: #ec4899;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --text: #f8fafc;
+        }
 
-h1 {
-    text-align: center;
-    margin-bottom: 30px;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-/* Game Info Section */
-.game-info-section {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 40px;
-    padding: 20px;
-    background: #f5f5f5;
-    border-radius: 10px;
-}
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at 50% -20%, #1e293b 0%, #05070a 100%);
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
 
-.period-control,
-.time-control {
-    text-align: center;
-}
+        /* Header */
+        header {
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.2);
+        }
 
-.period-display,
-.time-display {
-    font-size: 3em;
-    font-weight: bold;
-    margin: 10px 0;
-    padding: 10px;
-    background: white;
-    border-radius: 5px;
-    border: 2px solid #333;
-}
+        .logo {
+            font-weight: 800;
+            letter-spacing: -1px;
+            font-size: 1.5rem;
+        }
 
-.time-control {
-    min-width: 300px;
-}
+        .logo span {
+            color: var(--accent);
+        }
 
-.time-buttons {
-    margin-top: 15px;
-}
+        /* Main Layout */
+        main {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr 1fr;
+            gap: 1rem;
+            padding: 1rem;
+            flex: 1;
+            max-height: calc(100vh - 120px);
+        }
 
-.time-buttons button {
-    margin: 5px;
-    padding: 8px 15px;
-}
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
 
-/* Teams Section */
-.teams-section {
-    display: flex;
-    justify-content: space-around;
-    gap: 30px;
-    margin-bottom: 30px;
-}
+        /* Team Panels */
+        .team-id {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
 
-.team-control {
-    flex: 1;
-    padding: 20px;
-    border: 2px solid #333;
-    border-radius: 10px;
-    text-align: center;
-}
+        .team-name-input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--border);
+            color: white;
+            font-size: 1.25rem;
+            font-weight: 700;
+            width: 100%;
+            padding: 0.5rem 0;
+            transition: border-color 0.3s;
+        }
 
-.team-control h3 {
-    margin-bottom: 20px;
-}
+        .team-name-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
 
-.team-control input {
-    width: 80%;
-    padding: 8px;
-    margin-bottom: 20px;
-    font-size: 1.2em;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
+        .big-score {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 6rem;
+            text-align: center;
+            margin: 1rem 0;
+            line-height: 1;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+        }
 
-.score-section,
-.fouls-section {
-    margin: 20px 0;
-    padding: 15px;
-    background: #f9f9f9;
-    border-radius: 5px;
-}
+        .score-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
 
-.score-display {
-    font-size: 4em;
-    font-weight: bold;
-    margin: 10px 0;
-    color: #333;
-}
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 1rem 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: white;
+        }
 
-.fouls-display {
-    font-size: 3em;
-    font-weight: bold;
-    margin: 10px 0;
-    color: #d32f2f;
-}
+        .btn:active {
+            transform: scale(0.95);
+        }
 
-button {
-    padding: 10px 20px;
-    margin: 5px;
-    border: none;
-    border-radius: 5px;
-    background: #007bff;
-    color: white;
-    font-size: 1em;
-    cursor: pointer;
-    transition: background 0.3s;
-}
+        .btn-main {
+            background: rgba(255, 255, 255, 0.1);
+        }
 
-button:hover {
-    background: #0056b3;
-}
+        .btn-main:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
 
-button:active {
-    transform: scale(0.98);
-}
+        .home-accent {
+            background: var(--home);
+        }
 
-.controls-section {
-    text-align: center;
-    margin-top: 30px;
-}
+        .away-accent {
+            background: var(--away);
+        }
 
-.controls-section button {
-    padding: 15px 30px;
-    font-size: 1.2em;
-    margin: 0 10px;
-}
+        .btn-sub {
+            background: rgba(255, 255, 255, 0.05);
+            font-size: 0.8rem;
+            grid-column: span 1;
+            color: #94a3b8;
+        }
 
-.status {
-    text-align: center;
-    margin-top: 20px;
-    padding: 10px;
-    font-weight: bold;
-    min-height: 30px;
-}
+        .foul-btn {
+            grid-column: span 3;
+            margin-top: 0.5rem;
+            background: #334155;
+        }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .teams-section {
-        flex-direction: column;
-    }
+        /* Central Game Center */
+        .game-center {
+            justify-content: space-between;
+            text-align: center;
+        }
 
-    .game-info-section {
-        flex-direction: column;
-        gap: 20px;
-    }
+        .clock-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 5rem;
+            color: var(--accent);
+            margin: 0.5rem 0;
+        }
 
-    .time-buttons {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-}
+        .period-box {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #94a3b8;
+        }
+
+        .period-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: white;
+        }
+
+        .timer-config {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .timer-config input {
+            width: 60px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            color: white;
+            text-align: center;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn-start {
+            background: var(--success);
+            grid-column: span 2;
+            font-size: 1.2rem;
+        }
+
+        .btn-update {
+            background: var(--home);
+        }
+
+        .btn-reset {
+            background: var(--danger);
+        }
+
+        footer {
+            height: 80px;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+            border-top: 1px solid var(--border);
+        }
+
+        .log-mini {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            max-width: 50%;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .presets {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .btn-preset {
+            padding: 4px 8px;
+            font-size: 0.7rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .foul-count {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+        }
