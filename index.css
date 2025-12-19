@@ -1,0 +1,159 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Game Info Section */
+.game-info-section {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 40px;
+    padding: 20px;
+    background: #f5f5f5;
+    border-radius: 10px;
+}
+
+.period-control,
+.time-control {
+    text-align: center;
+}
+
+.period-display,
+.time-display {
+    font-size: 3em;
+    font-weight: bold;
+    margin: 10px 0;
+    padding: 10px;
+    background: white;
+    border-radius: 5px;
+    border: 2px solid #333;
+}
+
+.time-control {
+    min-width: 300px;
+}
+
+.time-buttons {
+    margin-top: 15px;
+}
+
+.time-buttons button {
+    margin: 5px;
+    padding: 8px 15px;
+}
+
+/* Teams Section */
+.teams-section {
+    display: flex;
+    justify-content: space-around;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.team-control {
+    flex: 1;
+    padding: 20px;
+    border: 2px solid #333;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.team-control h3 {
+    margin-bottom: 20px;
+}
+
+.team-control input {
+    width: 80%;
+    padding: 8px;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.score-section,
+.fouls-section {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 5px;
+}
+
+.score-display {
+    font-size: 4em;
+    font-weight: bold;
+    margin: 10px 0;
+    color: #333;
+}
+
+.fouls-display {
+    font-size: 3em;
+    font-weight: bold;
+    margin: 10px 0;
+    color: #d32f2f;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    background: #007bff;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+.controls-section {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.controls-section button {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    margin: 0 10px;
+}
+
+.status {
+    text-align: center;
+    margin-top: 20px;
+    padding: 10px;
+    font-weight: bold;
+    min-height: 30px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .teams-section {
+        flex-direction: column;
+    }
+
+    .game-info-section {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .time-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
