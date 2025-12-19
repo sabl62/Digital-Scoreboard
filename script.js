@@ -1,5 +1,5 @@
 // API Configuration (Untouched as requested)
-const API_BASE = "http://127.0.0.1:8000/api/scoreboard";
+const API_BASE = "https://digital-scoreboard-backend.onrender.com/api/scoreboard";
 
 // This function syncs the UI with your backend data
 async function updateScoreboard() {
