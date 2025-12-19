@@ -1,5 +1,5 @@
 // API Configuration (Untouched as requested)
-const API_BASE = "https://digital-scoreboard-backend.onrender.com/api/scoreboard";
+const API_BASE = "https://digital-scoreboard-backend-git-c3d739-sabal-bajagains-projects.vercel.app/api/scoreboard/get";
 
 // This function syncs the UI with your backend data
 async function updateScoreboard() {

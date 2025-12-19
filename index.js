@@ -1,4 +1,4 @@
-const API_BASE = "https://digital-scoreboard-backend.onrender.com/api/scoreboard";
+const API_BASE = "https://digital-scoreboard-backend-git-c3d739-sabal-bajagains-projects.vercel.app/api/scoreboard/get";
 
 
         const gameState = {
