@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>KMC CUP | Live Broadcast Scoreboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@700&display=swap"
+        rel="stylesheet">
+        <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+    <div class="scoreboard-container">
+        <div class="game-info">
+            <div class="info-block">
+                <span class="label">PERIOD</span>
+                <span id="period" class="value">1</span>
+            </div>
+            <div class="info-block">
+                <span class="label">GAME CLOCK</span>
+                <span id="time" class="value">12:00</span>
+            </div>
+        </div>
+
+        <div class="teams-container">
+            <div class="team team1">
+                <div class="team-name" id="t1Name">HOME TEAM</div>
+                <div class="team-stats">
+                    <div class="stat">
+                        <span class="label">SCORE</span>
+                        <div id="t1Score" class="score">0</div>
+                    </div>
+                    <div class="fouls-box">
+                        <span class="label">FOULS</span>
+                        <div id="t1Fouls" class="fouls">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="separator">VS</div>
+
+            <div class="team team2">
+                <div class="team-name" id="t2Name">AWAY TEAM</div>
+                <div class="team-stats">
+                    <div class="stat">
+                        <span class="label">SCORE</span>
+                        <div id="t2Score" class="score">0</div>
+                    </div>
+                    <div class="fouls-box">
+                        <span class="label">FOULS</span>
+                        <div id="t2Fouls" class="fouls">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bonus-indicator">
+            <div class="bonus-box">
+                <span id="team1Bonus" class="bonus">BONUS</span>
+            </div>
+            <div class="bonus-box">
+                <span id="team2Bonus" class="bonus">BONUS</span>
+            </div>
+        </div>
+
+        <div class="clock-status">
+            <span id="clockStatus" class="status">CLOCK STOPPED</span>
+        </div>
+    </div>
+
+    <script src="script.js">
+       
+    </script>
+</body>
+
+</html>
