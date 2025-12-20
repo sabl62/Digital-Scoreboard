@@ -1,7 +1,5 @@
-// API Configuration (Untouched as requested)
-const API_BASE = "https://digital-scoreboard-backend.onrender.com/api/scoreboard";
 
-// This function syncs the UI with your backend data
+const API_BASE = "https://digital-scoreboard-backend.onrender.com/api/scoreboard";
 async function updateScoreboard() {
     try {
         const response = await fetch(`${API_BASE}/get/`);
@@ -9,7 +7,6 @@ async function updateScoreboard() {
         const data = result.data;
 
         if (data) {
-            // Update Text Content
             document.getElementById('period').textContent = data.period;
             document.getElementById('time').textContent = formatTime(data.time_remaining);
 
@@ -21,7 +18,6 @@ async function updateScoreboard() {
             document.getElementById('t2Score').textContent = data.team2_score;
             document.getElementById('t2Fouls').textContent = data.team2_fouls;
 
-            // Update Clock Status Visuals
             const statusEl = document.getElementById('clockStatus');
             if (data.clock_running) {
                 statusEl.textContent = "CLOCK LIVE";
@@ -31,7 +27,6 @@ async function updateScoreboard() {
                 statusEl.classList.remove('running');
             }
 
-            // Bonus Logic (Assuming 5 fouls = bonus)
             document.getElementById('team1Bonus').classList.toggle('active', data.team1_fouls >= 5);
             document.getElementById('team2Bonus').classList.toggle('active', data.team2_fouls >= 5);
         }
@@ -46,6 +41,6 @@ function formatTime(seconds) {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
 
-// Poll every 1 second for live updates
+
 setInterval(updateScoreboard, 1000);
 updateScoreboard();
