@@ -1,6 +1,16 @@
-const API_BASE = "https://digital-scoreboard-backend-git-c3d739-sabal-bajagains-projects.vercel.app/api/scoreboard/get";
+const API_BASE = "https://digital-scoreboard-backend.onrender.com/api/scoreboard";
+function verifyPass(){
+    const passInput = document.getElementById("password-input").value;
+    const pass = "admn@kmc123";
 
-
+    while(passInput != pass){
+        document.getElementById('message').innerText = "wrong password, try again!"
+    }
+    if (passInput == pass){
+        document.getElementsByClassName('admin-login')[0].style.display = "none";
+        document.getElementsByClassName('container')[0].style.display = "flex"
+}
+}
         const gameState = {
             team1Score: 0, team2Score: 0,
             team1Fouls: 0, team2Fouls: 0,

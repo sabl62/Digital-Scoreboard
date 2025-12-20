@@ -14,6 +14,17 @@
 </head>
 
 <body>
+
+    <div class="admin-login">
+        <h1>Admin login</h1>
+        <label for="password-input">
+            <input type="text" id="password-input">
+            <p>Enter Password</p>
+        </label><br><br><br>
+        <button id="login-button" onclick="verifyPass()">Log In</button>
+        <p id="message"></p>
+    </div>
+<div class="container" style="display: none;">
     <header>
         <div class="logo">KMC<span>CUP</span></div>
         <div class="period-box">Period <span id="period-display" class="period-value">1</span></div>
@@ -107,6 +118,7 @@
         <div style="font-size: 0.7rem; opacity: 0.5;">KMC CUP DIGITAL SCOREBOARD</div>
         <div style="font-size: 0.7rem; opacity: 0.5;">Team Mometrix</div>
     </footer>
+</div>
 
     <script src="index.js">
 
