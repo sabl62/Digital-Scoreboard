@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from backend.myapp import views
 
 urlpatterns = [
     path('get/', views.get_scoreboard_data, name='get_scoreboard'),
