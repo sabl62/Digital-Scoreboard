@@ -1,18 +1,44 @@
 const API_BASE = "https://digital-scoreboard-backend.onrender.com/api/scoreboard";
+
+// --- NEW: PERSISTENCE HELPERS ---
+function saveStateToLocal() {
+    localStorage.setItem("gameState", JSON.stringify(gameState));
+}
+
+function loadStateFromLocal() {
+    const saved = localStorage.getItem("gameState");
+    if (saved) {
+        const parsed = JSON.parse(saved);
+        // We force clockRunning to false on refresh to prevent interval bugs
+        parsed.clockRunning = false;
+        return parsed;
+    }
+    return null;
+}
+
+function checkLoginStatus() {
+    if (localStorage.getItem("isAdminLoggedIn") === "true") {
+        document.getElementsByClassName('admin-login')[0].style.display = "none";
+        document.getElementsByClassName('container')[0].style.display = "flex";
+    }
+}
+// ------------------------------
+
 function verifyPass() {
     const passInput = document.getElementById("password-input").value;
     const pass = "admn@kmc123";
 
-
-    if (passInput == pass) {
+    if (passInput === pass) {
+        localStorage.setItem("isAdminLoggedIn", "true"); // Save login
         document.getElementsByClassName('admin-login')[0].style.display = "none";
-        document.getElementsByClassName('container')[0].style.display = "flex"
+        document.getElementsByClassName('container')[0].style.display = "flex";
+    } else {
+        alert("Wrong password, try again!");
     }
-    else{
-        alert("wrong password, try again!")
-        }
 }
-const gameState = {
+
+// Initialize state from LocalStorage OR defaults
+const gameState = loadStateFromLocal() || {
     team1Score: 0, team2Score: 0,
     team1Fouls: 0, team2Fouls: 0,
     team1Name: "HOME TEAM", team2Name: "AWAY TEAM",
@@ -38,7 +64,6 @@ const elements = {
     log: document.getElementById("activity-log")
 };
 
-
 function formatTime(seconds) {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -63,8 +88,13 @@ function updateDisplays() {
     elements.secondsInput.value = gameState.timeRemaining % 60;
 
     elements.timeDisplay.style.color = gameState.timeRemaining <= 10 ? "var(--danger)" : "var(--accent)";
+
+    saveStateToLocal(); // Save to local storage on every visual update
 }
 
+// Optimized update with batching
+let updateQueue = null;
+let isUpdating = false;
 
 async function sendUpdate() {
     const payload = {
@@ -79,54 +109,85 @@ async function sendUpdate() {
         clock_running: gameState.clockRunning,
     };
 
+    if (isUpdating) {
+        updateQueue = payload;
+        return;
+    }
+
+    isUpdating = true;
+
     try {
         const response = await fetch(`${API_BASE}/update/`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
         });
-        if (response.ok) elements.statusText.textContent = "LIVE CONNECTION";
+
+        if (response.ok) {
+            elements.statusText.textContent = "LIVE CONNECTION";
+        }
     } catch (e) {
         elements.statusText.textContent = "OFFLINE";
+        console.error('Update failed:', e);
+    } finally {
+        isUpdating = false;
+        if (updateQueue) {
+            const queued = updateQueue;
+            updateQueue = null;
+            // Apply queued values to current gameState before retrying
+            Object.assign(gameState, {
+                team1Name: queued.team1_name,
+                team2Name: queued.team2_name,
+                team1Score: queued.team1_score,
+                team2Score: queued.team2_score,
+                team1Fouls: queued.team1_fouls,
+                team2Fouls: queued.team2_fouls,
+                period: queued.period,
+                timeRemaining: queued.time_remaining,
+                clockRunning: queued.clock_running
+            });
+            setTimeout(sendUpdate, 50);
+        }
     }
 }
 
 function startStopClock() {
     if (gameState.clockRunning) {
-
         clearInterval(clockInterval);
         gameState.clockRunning = false;
         elements.clockControl.innerHTML = '<i class="fas fa-play"></i> START CLOCK';
         elements.clockControl.style.background = "var(--success)";
         addLogEntry("Clock Paused");
+        updateDisplays();
+        sendUpdate();
     } else {
-
         gameState.clockRunning = true;
         elements.clockControl.innerHTML = '<i class="fas fa-pause"></i> PAUSE CLOCK';
         elements.clockControl.style.background = "var(--danger)";
         addLogEntry("Clock Started");
+        updateDisplays();
+        sendUpdate();
 
+        let lastSync = Date.now();
         clockInterval = setInterval(() => {
             if (gameState.timeRemaining > 0) {
                 gameState.timeRemaining--;
                 updateDisplays();
 
-                sendUpdate();
-
+                const now = Date.now();
+                if (now - lastSync >= 500) {
+                    sendUpdate();
+                    lastSync = now;
+                }
             } else {
-
                 clearInterval(clockInterval);
                 gameState.clockRunning = false;
                 updateDisplays();
-
                 sendUpdate();
             }
         }, 1000);
     }
-
-    sendUpdate();
 }
-
 
 document.querySelectorAll("[data-points]").forEach(btn => {
     btn.onclick = () => {
@@ -170,25 +231,49 @@ document.querySelectorAll(".btn-preset").forEach(btn => {
 
 document.getElementById("full-reset").onclick = async () => {
     if (confirm("Full Game Reset?")) {
-        gameState.team1Score = 0; gameState.team2Score = 0;
-        gameState.team1Fouls = 0; gameState.team2Fouls = 0;
-        gameState.timeRemaining = 720; gameState.period = 1;
+        // Clear Local Storage on Full Reset
+        localStorage.removeItem("gameState");
+
+        gameState.team1Score = 0;
+        gameState.team2Score = 0;
+        gameState.team1Fouls = 0;
+        gameState.team2Fouls = 0;
+        gameState.timeRemaining = 720;
+        gameState.period = 1;
+        gameState.clockRunning = false;
+
+        if (clockInterval) clearInterval(clockInterval);
+
         updateDisplays();
         await fetch(`${API_BASE}/reset/`, { method: "POST" });
         location.reload();
     }
 };
 
+let nameChangeTimer;
+elements.team1Name.oninput = (e) => { // Changed to oninput for better responsiveness
+    gameState.team1Name = e.target.value;
+    updateDisplays();
+    clearTimeout(nameChangeTimer);
+    nameChangeTimer = setTimeout(sendUpdate, 300);
+};
 
-elements.team1Name.onchange = (e) => { gameState.team1Name = e.target.value; sendUpdate(); };
-elements.team2Name.onchange = (e) => { gameState.team2Name = e.target.value; sendUpdate(); };
+elements.team2Name.oninput = (e) => {
+    gameState.team2Name = e.target.value;
+    updateDisplays();
+    clearTimeout(nameChangeTimer);
+    nameChangeTimer = setTimeout(sendUpdate, 300);
+};
 
 const handleManualTime = () => {
     gameState.timeRemaining = (parseInt(elements.minutesInput.value) * 60) + parseInt(elements.secondsInput.value);
     updateDisplays();
+    sendUpdate();
 };
+
 elements.minutesInput.onchange = handleManualTime;
 elements.secondsInput.onchange = handleManualTime;
 
-
+// RUN ON PAGE LOAD
+checkLoginStatus();
 updateDisplays();
