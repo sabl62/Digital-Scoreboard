@@ -1,6 +1,6 @@
 const API_BASE = "https://digital-scoreboard-backend.onrender.com/api/scoreboard";
 
-// Local state for smooth clock
+
 let localTime = 0;
 let localClockRunning = false;
 let localClockInterval = null;
@@ -11,11 +11,13 @@ function formatTime(seconds) {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
 
-// Update DOM only when values change
+
 let lastRendered = {
     period: null,
     time: null,
     team1Name: null,
+    scoredByT1: null,
+    scoredByT2: null,
     team1Score: null,
     team1Fouls: null,
     team2Name: null,
@@ -31,6 +33,8 @@ function updateDOM(data) {
     const time = document.getElementById('time');
     const t1Name = document.getElementById('t1Name');
     const t1Score = document.getElementById('t1Score');
+    const t1Scorer = document.getElementById('scorer-name-t1')
+    const t2Scorer = document.getElementById('scorer-name-t2')
     const t1Fouls = document.getElementById('t1Fouls');
     const t2Name = document.getElementById('t2Name');
     const t2Score = document.getElementById('t2Score');
@@ -39,7 +43,6 @@ function updateDOM(data) {
     const team1Bonus = document.getElementById('team1Bonus');
     const team2Bonus = document.getElementById('team2Bonus');
 
-    // Use requestAnimationFrame for smooth updates
     requestAnimationFrame(() => {
         if (lastRendered.period !== data.period) {
             period.textContent = data.period;
@@ -82,6 +85,16 @@ function updateDOM(data) {
             lastRendered.team2Fouls = data.team2_fouls;
         }
 
+        if (lastRendered.scoredByT1 !== data.scored_by_t1){
+            t1Scorer.textContent = data.scored_by_t1;
+            lastRendered.scoredByT1 = data.scored_by_t1;
+        }
+
+        if (lastRendered.scoredByT1 !== data.scored_by_t1){
+            t2Scorer.textContent = data.scored_by_t2;
+            lastRendered.scoredByT1 = data.scored_by_t2;
+        }
+
         const clockStatus = localClockRunning ? "CLOCK LIVE" : "CLOCK STOPPED";
         if (lastRendered.clockStatus !== clockStatus) {
             statusEl.textContent = clockStatus;
@@ -108,7 +121,7 @@ function updateDOM(data) {
     });
 }
 
-// Local clock for smooth countdown
+
 function startLocalClock() {
     if (localClockInterval) return;
 
@@ -139,25 +152,22 @@ async function updateScoreboard() {
         const data = result.data;
 
         if (data) {
-            // Detect clock state change
+     
             const clockStateChanged = localClockRunning !== data.clock_running;
 
-            // Update local clock state
             localClockRunning = data.clock_running;
 
-            // Sync time when clock stops/starts or when there's drift
             if (clockStateChanged || !localClockRunning || Math.abs(localTime - data.time_remaining) > 2) {
                 localTime = data.time_remaining;
             }
 
-            // Manage local clock interval
             if (localClockRunning) {
                 startLocalClock();
             } else {
                 stopLocalClock();
             }
 
-            // Update display
+            
             updateDOM(data);
         }
     } catch (error) {
@@ -165,10 +175,10 @@ async function updateScoreboard() {
     }
 }
 
-// Poll server at optimal rate
+
 let pollInterval = setInterval(updateScoreboard, 1000);
 
-// Faster polling when tab is visible
+
 document.addEventListener('visibilitychange', () => {
     clearInterval(pollInterval);
     if (document.hidden) {
@@ -179,6 +189,5 @@ document.addEventListener('visibilitychange', () => {
     }
 });
 
-// Initialize
 updateScoreboard();
 startLocalClock();

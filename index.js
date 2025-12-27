@@ -1,6 +1,6 @@
 const API_BASE = "https://digital-scoreboard-backend.onrender.com/api/scoreboard";
 
-// --- NEW: PERSISTENCE HELPERS ---
+
 function saveStateToLocal() {
     localStorage.setItem("gameState", JSON.stringify(gameState));
 }
@@ -9,7 +9,6 @@ function loadStateFromLocal() {
     const saved = localStorage.getItem("gameState");
     if (saved) {
         const parsed = JSON.parse(saved);
-        // We force clockRunning to false on refresh to prevent interval bugs
         parsed.clockRunning = false;
         return parsed;
     }
@@ -22,14 +21,14 @@ function checkLoginStatus() {
         document.getElementsByClassName('container')[0].style.display = "flex";
     }
 }
-// ------------------------------
+
 
 function verifyPass() {
     const passInput = document.getElementById("password-input").value;
     const pass = "admn@kmc123";
 
     if (passInput === pass) {
-        localStorage.setItem("isAdminLoggedIn", "true"); // Save login
+        localStorage.setItem("isAdminLoggedIn", "true"); 
         document.getElementsByClassName('admin-login')[0].style.display = "none";
         document.getElementsByClassName('container')[0].style.display = "flex";
     } else {
@@ -37,10 +36,10 @@ function verifyPass() {
     }
 }
 
-// Initialize state from LocalStorage OR defaults
 const gameState = loadStateFromLocal() || {
     team1Score: 0, team2Score: 0,
     team1Fouls: 0, team2Fouls: 0,
+    scoredByT1: "", scoredByT2: "",
     team1Name: "HOME TEAM", team2Name: "AWAY TEAM",
     period: 1, timeRemaining: 720,
     clockRunning: false
@@ -50,7 +49,9 @@ let clockInterval = null;
 
 const elements = {
     team1Score: document.getElementById("team1-score"),
+    scoredByT1: document.getElementsByClassName("pInput")[0].value,
     team2Score: document.getElementById("team2-score"),
+    scoredByT2: document.getElementsByClassName("pInput")[1].value,
     team1Name: document.getElementById("team1-name"),
     team2Name: document.getElementById("team2-name"),
     periodDisplay: document.getElementById("period-display"),
@@ -83,16 +84,16 @@ function updateDisplays() {
     elements.timeDisplay.textContent = formatTime(gameState.timeRemaining);
     elements.team1FoulsDisplay.textContent = gameState.team1Fouls;
     elements.team2FoulsDisplay.textContent = gameState.team2Fouls;
-
+    elements.scoredByT1 = gameState.scoredByT1;
+    elements.scoredByT2 = gameState.scoredByT2;
     elements.minutesInput.value = Math.floor(gameState.timeRemaining / 60);
     elements.secondsInput.value = gameState.timeRemaining % 60;
 
     elements.timeDisplay.style.color = gameState.timeRemaining <= 10 ? "var(--danger)" : "var(--accent)";
 
-    saveStateToLocal(); // Save to local storage on every visual update
+    saveStateToLocal(); 
 }
 
-// Optimized update with batching
 let updateQueue = null;
 let isUpdating = false;
 
@@ -102,6 +103,8 @@ async function sendUpdate() {
         team2_name: gameState.team2Name,
         team1_score: gameState.team1Score,
         team2_score: gameState.team2Score,
+        scoredByT1: gameState.scoredByT1,
+        scoredByT2: gameState.scoredByT2,
         team1_fouls: gameState.team1Fouls,
         team2_fouls: gameState.team2Fouls,
         period: gameState.period,
@@ -134,10 +137,11 @@ async function sendUpdate() {
         if (updateQueue) {
             const queued = updateQueue;
             updateQueue = null;
-            // Apply queued values to current gameState before retrying
             Object.assign(gameState, {
                 team1Name: queued.team1_name,
+                scoredByT1: queued.scored_by_t1,
                 team2Name: queued.team2_name,
+                scoredByT2: queued.scored_by_t2,
                 team1Score: queued.team1_score,
                 team2Score: queued.team2_score,
                 team1Fouls: queued.team1_fouls,
@@ -231,7 +235,6 @@ document.querySelectorAll(".btn-preset").forEach(btn => {
 
 document.getElementById("full-reset").onclick = async () => {
     if (confirm("Full Game Reset?")) {
-        // Clear Local Storage on Full Reset
         localStorage.removeItem("gameState");
 
         gameState.team1Score = 0;
@@ -251,7 +254,7 @@ document.getElementById("full-reset").onclick = async () => {
 };
 
 let nameChangeTimer;
-elements.team1Name.oninput = (e) => { // Changed to oninput for better responsiveness
+elements.team1Name.oninput = (e) => {
     gameState.team1Name = e.target.value;
     updateDisplays();
     clearTimeout(nameChangeTimer);
@@ -274,6 +277,5 @@ const handleManualTime = () => {
 elements.minutesInput.onchange = handleManualTime;
 elements.secondsInput.onchange = handleManualTime;
 
-// RUN ON PAGE LOAD
 checkLoginStatus();
 updateDisplays();
