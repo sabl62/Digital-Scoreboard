@@ -1,134 +1,237 @@
 <!DOCTYPE html>
+
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>KMC CUP | Control Panel</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@700&display=swap"
-        rel="stylesheet" />
-    <link rel="stylesheet" href="index.css">
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
 
-</head>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@700&display=swap"
+      rel="stylesheet"
+    />
 
-<body>
+    <link rel="stylesheet" href="index.css" />
+  </head>
 
+  <body>
     <div class="admin-login">
-        <h1>Admin login</h1>
-        <label for="password-input">
-            <input type="text" id="password-input">
-            <p>Enter Password</p>
-        </label><br><br><br>
-        <button id="login-button" onclick="verifyPass()">Log In</button>
+      <h1>Admin login</h1>
+
+      <label for="password-input">
+        <input type="text" id="password-input" />
+
+        <p>Enter Password</p> </label
+      ><br /><br /><br />
+
+      <button id="login-button" onclick="verifyPass()">Log In</button>
     </div>
-<div class="container" style="display: none;">
-    <header>
+
+    <div class="container" style="display: none">
+      <header>
         <div class="logo">KMC<span>CUP</span></div>
-        <div class="period-box">Quarter <span id="period-display" class="period-value">1</span></div>
-        <div class="status-badge" id="connection-status">
-            <span class="dot"></span> <span id="status-text">SYSTEM READY</span>
+
+        <div class="period-box">
+          Quarter <span id="period-display" class="period-value">1</span>
         </div>
-    </header>
 
-    <main>
+        <div class="status-badge" id="connection-status">
+          <span class="dot"></span> <span id="status-text">SYSTEM READY</span>
+        </div>
+      </header>
+
+      <main>
         <section class="panel">
-            <div class="team-id">
-                <i class="fas fa-home" style="color: var(--home)"></i>
-                <input type="text" id="team1-name" class="team-name-input" value="HOME TEAM">
-            </div>
+          <div class="team-id">
+            <i class="fas fa-home" style="color: var(--home)"></i>
 
-            <div class="foul-count">FOULS: <span id="team1-fouls-display">0</span></div>
-            <div class="big-score" id="team1-score">0</div>
+            <input
+              type="text"
+              id="team1-name"
+              class="team-name-input"
+              value="HOME TEAM"
+            />
+          </div>
 
-            <div class="score-controls">
-                <button class="btn home-accent" data-team="team1"
-                    data-points="1"><span>+1</span><small>FT</small></button>
-                <button class="btn home-accent" data-team="team1"
-                    data-points="2"><span>+2</span><small>FG</small></button>
-                <button class="btn home-accent" data-team="team1"
-                    data-points="3"><span>+3</span><small>3PT</small></button>
-                <input type="text" class="pInput home-accent" placeholder="scored by">
-                <button class="btn btn-sub" data-team="team1" data-points="-1"><i class="fas fa-undo"></i> CORR</button>
-                <button class="btn btn-sub" data-action="reset-fouls-team1">RESET FOULS</button>
-                <button class="btn btn-sub" data-action="team1-foul" style="background: var(--danger); color: white;">+
-                    FOUL</button>
-            </div>
+          <div class="foul-count">
+            FOULS: <span id="team1-fouls-display">0</span>
+          </div>
+
+          <div class="big-score" id="team1-score">0</div>
+
+          <div class="score-controls">
+            <button class="btn home-accent" data-team="team1" data-points="1">
+              <span>+1</span><small>FT</small>
+            </button>
+
+            <button class="btn home-accent" data-team="team1" data-points="2">
+              <span>+2</span><small>FG</small>
+            </button>
+
+            <button class="btn home-accent" data-team="team1" data-points="3">
+              <span>+3</span><small>3PT</small>
+            </button>
+
+            <!-- <input
+              type="text"
+              class="pInput home-accent"
+              placeholder="scored by"
+            /> -->
+
+            <button class="btn btn-sub" data-team="team1" data-points="-1">
+              <i class="fas fa-undo"></i> CORR
+            </button>
+
+            <button class="btn btn-sub" data-action="reset-fouls-team1">
+              RESET FOULS
+            </button>
+
+            <button
+              class="btn btn-sub"
+              data-action="team1-foul"
+              style="background: var(--danger); color: white"
+            >
+              + FOUL
+            </button>
+          </div>
         </section>
 
         <section class="panel game-center">
-            <div>
-                <div class="clock-display" id="time-display">12:00</div>
-                <div class="timer-config">
-                    <input type="number" id="minutes-input" value="12" min="0" max="99">
-                    <span>:</span>
-                    <input type="number" id="seconds-input" value="00" min="0" max="59">
-                </div>
-                <div class="timeout-selection">
-                </div>
-                <div class="presets">
-                    <button class="btn-preset" data-minutes="12">12m</button>
-                    <button class="btn-preset" data-minutes="10">10m</button>
-                    <button class="btn-preset" data-minutes="6">6m</button>
-                    <button class="btn-preset" data-minutes="5">5m</button>
-                    <button class="btn-preset" data-minutes="2">2m</button>
-                </div>
+          <div>
+            <div class="clock-display" id="time-display">12:00</div>
+
+            <div class="timer-config">
+              <input
+                type="number"
+                id="minutes-input"
+                value="12"
+                min="0"
+                max="99"
+              />
+
+              <span>:</span>
+
+              <input
+                type="number"
+                id="seconds-input"
+                value="00"
+                min="0"
+                max="59"
+              />
             </div>
 
-            <div class="action-grid">
-                <button class="btn btn-start" id="clock-control">
-                    <i class="fas fa-play"></i> &nbsp; START CLOCK
-                </button>
-                <button class="btn btn-main" id="period-up">
-                    <i class="fas fa-step-forward"></i> NEXT PERIOD
-                </button>
-                <button class="btn btn-update" id="send-update">
-                    <i class="fas fa-sync"></i> SYNC
-                </button>
-                <button class="btn btn-reset" id="full-reset">
-                    <i class="fas fa-power-off"></i> RESET ALL
-                </button>
+            <div class="timeout-selection"></div>
+
+            <div class="presets">
+              <button class="btn-preset" data-minutes="12">12m</button>
+
+              <button class="btn-preset" data-minutes="10">10m</button>
+
+              <button class="btn-preset" data-minutes="6">6m</button>
+
+              <button class="btn-preset" data-minutes="5">5m</button>
+
+              <button class="btn-preset" data-minutes="2">2m</button>
             </div>
+          </div>
+
+          <div class="action-grid">
+            <button class="btn btn-start" id="clock-control">
+              <i class="fas fa-play"></i> &nbsp; START CLOCK
+            </button>
+
+            <button class="btn btn-main" id="period-up">
+              <i class="fas fa-step-forward"></i> NEXT PERIOD
+            </button>
+
+            <button class="btn btn-update" id="send-update">
+              <i class="fas fa-sync"></i> SYNC
+            </button>
+
+            <button class="btn btn-reset" id="full-reset">
+              <i class="fas fa-power-off"></i> RESET ALL
+            </button>
+          </div>
         </section>
 
         <section class="panel">
-            <div class="team-id">
-                <i class="fas fa-shuttle-space" style="color: var(--away)"></i>
-                <input type="text" id="team2-name" class="team-name-input" value="AWAY TEAM">
-            </div>
+          <div class="team-id">
+            <i class="fas fa-shuttle-space" style="color: var(--away)"></i>
 
-            <div class="foul-count">FOULS: <span id="team2-fouls-display">0</span></div>
-            <div class="big-score" id="team2-score">0</div>
+            <input
+              type="text"
+              id="team2-name"
+              class="team-name-input"
+              value="AWAY TEAM"
+            />
+          </div>
 
-            <div class="score-controls">
-                <button class="btn away-accent" data-team="team2"
-                    data-points="1"><span>+1</span><small>FT</small></button>
-                <button class="btn away-accent" data-team="team2"
-                    data-points="2"><span>+2</span><small>FG</small></button>
-                <button class="btn away-accent" data-team="team2"
-                    data-points="3"><span>+3</span><small>3PT</small></button>
-                <input type="text" class="pInput away-accent" placeholder="scored by">
-                <button class="btn btn-sub" data-team="team2" data-points="-1"><i class="fas fa-undo"></i> CORR</button>
-                <button class="btn btn-sub" data-action="reset-fouls-team2">RESET FOULS</button>
-                <button class="btn btn-sub" data-action="team2-foul" style="background: var(--danger); color: white;">+
-                    FOUL</button>
-            </div>
+          <div class="foul-count">
+            FOULS: <span id="team2-fouls-display">0</span>
+          </div>
+
+          <div class="big-score" id="team2-score">0</div>
+
+          <div class="score-controls">
+            <button class="btn away-accent" data-team="team2" data-points="1">
+              <span>+1</span><small>FT</small>
+            </button>
+
+            <button class="btn away-accent" data-team="team2" data-points="2">
+              <span>+2</span><small>FG</small>
+            </button>
+
+            <button class="btn away-accent" data-team="team2" data-points="3">
+              <span>+3</span><small>3PT</small>
+            </button>
+<!-- 
+            <input
+              type="text"
+              class="pInput away-accent"
+              placeholder="scored by"
+            /> -->
+
+            <button class="btn btn-sub" data-team="team2" data-points="-1">
+              <i class="fas fa-undo"></i> CORR
+            </button>
+
+            <button class="btn btn-sub" data-action="reset-fouls-team2">
+              RESET FOULS
+            </button>
+
+            <button
+              class="btn btn-sub"
+              data-action="team2-foul"
+              style="background: var(--danger); color: white"
+            >
+              + FOUL
+            </button>
+          </div>
         </section>
-    </main>
+      </main>
 
-    <footer>
-        <div class="log-mini" id="activity-log">System Initialized. Awaiting commands...</div>
-        <div style="font-size: 0.7rem; opacity: 0.5;">KMC CUP DIGITAL SCOREBOARD</div>
-        <div style="font-size: 0.7rem; opacity: 0.5;">Team Lilgineers</div>
-    </footer>
-</div>
+      <footer>
+        <div class="log-mini" id="activity-log">
+          System Initialized. Awaiting commands...
+        </div>
 
-    <script src="index.js">
+        <div style="font-size: 0.7rem; opacity: 0.5">
+          KMC CUP DIGITAL SCOREBOARD
+        </div>
 
-      
-    </script>
-</body>
+        <div style="font-size: 0.7rem; opacity: 0.5">Team Lilgineers</div>
+      </footer>
+    </div>
 
+    <script src="index.js"></script>
+  </body>
 </html>
+
 <!-- end -->
