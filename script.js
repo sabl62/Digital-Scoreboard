@@ -34,8 +34,8 @@ function updateDOM(data) {
   const time = document.getElementById("time");
   const t1Name = document.getElementById("t1Name");
   const t1Score = document.getElementById("t1Score");
-  const t1Scorer = document.getElementById("scorer-name-t1");
-  const t2Scorer = document.getElementById("scorer-name-t2");
+  // const t1Scorer = document.getElementById("scorer-name-t1");
+  // const t2Scorer = document.getElementById("scorer-name-t2");
   const t1Fouls = document.getElementById("t1Fouls");
   const t2Name = document.getElementById("t2Name");
   const t2Score = document.getElementById("t2Score");
@@ -84,23 +84,23 @@ function updateDOM(data) {
       lastRendered.team2Fouls = data.team2_fouls;
     }
 
-    const t1ScorersJSON = JSON.stringify(data.team1_scorers || []);
-    if (lastRendered.scoredByT1 !== t1ScorersJSON) {
-      t1Scorer.innerHTML = (data.team1_scorers || [])
-        .slice(-3)
-        .map((s) => `<div class="scorer-entry">${s}</div>`)
-        .join("");
-      lastRendered.scoredByT1 = t1ScorersJSON;
-    }
+    // const t1ScorersJSON = JSON.stringify(data.team1_scorers || []);
+    // if (lastRendered.scoredByT1 !== t1ScorersJSON) {
+    //   t1Scorer.innerHTML = (data.team1_scorers || [])
+    //     .slice(-3)
+    //     .map((s) => `<div class="scorer-entry">${s}</div>`)
+    //     .join("");
+    //   lastRendered.scoredByT1 = t1ScorersJSON;
+    // }
 
-    const t2ScorersJSON = JSON.stringify(data.team2_scorers || []);
-    if (lastRendered.scoredByT2 !== t2ScorersJSON) {
-      t2Scorer.innerHTML = (data.team2_scorers || [])
-        .slice(-3)
-        .map((s) => `<div class="scorer-entry">${s}</div>`)
-        .join("");
-      lastRendered.scoredByT2 = t2ScorersJSON;
-    }
+    // const t2ScorersJSON = JSON.stringify(data.team2_scorers || []);
+    // if (lastRendered.scoredByT2 !== t2ScorersJSON) {
+    //   t2Scorer.innerHTML = (data.team2_scorers || [])
+    //     .slice(-3)
+    //     .map((s) => `<div class="scorer-entry">${s}</div>`)
+    //     .join("");
+    //   lastRendered.scoredByT2 = t2ScorersJSON;
+    // }
 
     const clockStatusText = localClockRunning ? "CLOCK LIVE" : "CLOCK STOPPED";
 
@@ -112,20 +112,24 @@ function updateDOM(data) {
       lastRendered.clockStatus = clockStatusText;
     }
 
+
     const t1BonusActive = data.team2_fouls >= 5;
     const t2BonusActive = data.team1_fouls >= 5;
 
-    if (lastRendered.team1Bonus !== t1BonusActive) {
-      team1Bonus.classList.toggle("active", t1BonusActive);
-      lastRendered.team1Bonus = t1BonusActive;
-    }
-    if (lastRendered.team2Bonus !== t2BonusActive) {
-      team2Bonus.classList.toggle("active", t2BonusActive);
-      lastRendered.team2Bonus = t2BonusActive;
-    }
-  });
-}
 
+    const t1BonusEl = document.getElementById('team1Bonus');
+    const t2BonusEl = document.getElementById('team2Bonus');
+
+    if (t1BonusEl) {
+      t1BonusEl.classList.toggle("active", t1BonusActive);
+    }
+
+    if (t2BonusEl) {
+      t2BonusEl.classList.toggle("active", t2BonusActive);
+    }
+  }
+  )
+}
 
 function startLocalClock() {
   if (localClockInterval) return;
